@@ -1,0 +1,9 @@
+{% extends "index.html" %}
+
+{% block content %}
+	<div class="methods">
+		{% for method in module %}
+			<button type="submit" onclick="ExecPythonCommand('{{ module_name }}', '{{ method }}')">{{ method }}</button>
+		{% endfor %}
+	</div>
+{% endblock %}
