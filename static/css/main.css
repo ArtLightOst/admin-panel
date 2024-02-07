@@ -31,7 +31,6 @@ a:active {
 	color: rgb(54, 215, 146);
 }
 
-
 .navigation-bar {
 	display: flex;
 	flex-direction: row;
@@ -41,7 +40,7 @@ a:active {
 	padding: 20px;
 }
 
-.methods {
+.methods-list {
 	display: flex;
 	flex-direction: column;
 	align-items: center;
@@ -53,3 +52,12 @@ a:active {
 	position: fixed;
 	z-index: auto;
 }
+
+.methods-wrapper {
+	display: flex;
+}
+
+.methods-content {
+	flex-grow: 1;
+}
+

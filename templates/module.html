@@ -1,9 +1,15 @@
 {% extends "index.html" %}
 
 {% block content %}
-	<div class="methods">
-		{% for method in module %}
-			<button type="submit" onclick="ExecPythonCommand('{{ module_name }}', '{{ method }}')">{{ method }}</button>
-		{% endfor %}
+	<div class="methods-wrapper">
+		<div class="methods-list">
+			{% for method in methods %}
+				<button type="submit"
+						onclick="ExecPythonCommand('{{ module_name }}', '{{ method }}')">{{ method }}</button>
+			{% endfor %}
+		</div>
+		<div class="methods-content">
+
+		</div>
 	</div>
 {% endblock %}

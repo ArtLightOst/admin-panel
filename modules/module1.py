@@ -1,16 +1,15 @@
 class Service:
 
-    def _methods(self):
-        return [f for f in dir(self) if not f.startswith("_")]
+    def methods(self):
+        return [f for f in dir(self) if not f.startswith("_") and f.startswith("public")]
 
-    def print11111111111111111111111(self):
+    def public_print(self):
         print(1)
 
-    def print22222222222222222222222(self):
-        print(1)
-
-    def print33333333333333333333333(self):
-        print(1)
+    def shadow_print(self, data: dict) -> dict:
+        print(data)
+        # Тут должен выполняться системный код, результат выполнения парситься и формируется json (спецификацию определю позже)
+        return {"Скрытый 1": 1}
 
 
 instance = Service()

@@ -1,5 +1,5 @@
 from types import ModuleType
-from flask import Flask, render_template
+from flask import Flask, render_template, request
 from os import listdir
 
 app = Flask(__name__)
@@ -10,18 +10,22 @@ def index():
     return render_template(template_name_or_list="index.html", modules=get_list_of_modules())
 
 
-@app.route('/<string:MODULE>')
-def init_module(MODULE):
-    module_object: ModuleType = __import__(f"modules.{MODULE}", globals(), locals(), ["instance"])
-    return render_template(template_name_or_list="module.html", module_name=MODULE,
-                           module=module_object.instance._methods(), modules=get_list_of_modules())
+@app.route('/<string:module>')
+def init_module(module: str):
+    module_object: ModuleType = __import__(f"modules.{module}", globals(), locals(), ["instance"])
+    return render_template(template_name_or_list="module.html", module_name=module,
+                           methods=module_object.instance.methods(), modules=get_list_of_modules())
 
 
-@app.route('/<string:MODULE>/<string:FUNCTION>')
-def command(MODULE, FUNCTION):
-    module_object: ModuleType = __import__(f"modules.{MODULE}", globals(), locals(), ["instance"])
-    exec("module_object.instance." + FUNCTION + "()")
-    return ""
+@app.route('/<string:module>/<string:function>', methods=['POST'])
+def command(module: str, function: str):
+    module_object: ModuleType = __import__(f"modules.{module}", globals(), locals(), ["instance"])
+    exec(compile(source="response = module_object.instance." + function + "(request.get_json())",
+                 filename="",
+                 mode="exec"),
+         globals(),
+         locals())
+    return locals()['response']
 
 
 def get_list_of_modules() -> list[str]:
