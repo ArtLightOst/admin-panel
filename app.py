@@ -1,6 +1,6 @@
 from types import ModuleType
 from flask import Flask, render_template, request
-from os import listdir
+from service import get_list_of_modules
 
 app = Flask(__name__)
 
@@ -26,7 +26,3 @@ def command(module: str, function: str):
          globals(),
          locals())
     return locals()['response']
-
-
-def get_list_of_modules() -> list[str]:
-    return [f[:len(f) - 3] for f in listdir("./modules/") if f.endswith(".py")]

@@ -1,15 +1,15 @@
-class Service:
+from service import ParentService
 
-    def methods(self):
-        return [f for f in dir(self) if not f.startswith("_") and f.startswith("public")]
 
-    def public_print(self):
-        print(1)
+class Service(ParentService):
 
-    def shadow_print(self, data: dict) -> dict:
-        print(data)
-        # Тут должен выполняться системный код, результат выполнения парситься и формируется json (спецификацию определю позже)
-        return {"Скрытый 1": 1}
+    def public_print(self, data: dict) -> dict:  # TODO: доработать структуру данных для отрисовки
+        response = {
+            "tag": "input",
+            "type": "text",
+            "class": "input1"
+        }
+        return response
 
 
 instance = Service()

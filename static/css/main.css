@@ -47,17 +47,17 @@ a:active {
 	justify-content: normal;
 	padding: 20px;
 	width: max-content;
-	height: 100%;
 	background-color: rgb(56, 4, 112);
-	position: fixed;
-	z-index: auto;
 }
 
 .methods-wrapper {
 	display: flex;
+	height: 100vh;
 }
 
 .methods-content {
+	display: flex;
 	flex-grow: 1;
+	height: max-content;
 }
 
