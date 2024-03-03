@@ -1,7 +1,7 @@
 async function ExecPythonCommand(module, command) {
 
 	let body
-	let root = document.querySelector(".methods-content")
+	let root = document.querySelector("#methods-content")
 
 	if (command.startsWith("public")) {
 
@@ -26,7 +26,7 @@ async function ExecPythonCommand(module, command) {
 
 	if (command.startsWith("public")) {
 		root.innerHTML = ""
-		renderContent(data)
+		renderContent(root, data)
 	} else {
 		console.log(data)
 	}
@@ -37,13 +37,22 @@ function getDataRecursive(current, container) {
 	if (container instanceof Array) {
 		container.push(convertElement(current))
 	} else {
-		container[current.className] = convertElement(current)
+		container[current.id] = convertElement(current)
 	}
 
-	if (current.hasChildNodes()) {
+	if (current.childElementCount > 0) {
 
 		for (let i = 0; i < current.childElementCount; i++) {
-			getDataRecursive(current.children[i], container[current.className]["childs"])
+
+			let next
+
+			if (container instanceof Array) {
+				next = container.at(container.length - 1)["childs"]
+			} else {
+				next = container[current.id]["childs"]
+			}
+
+			getDataRecursive(current.children[i], next)
 		}
 
 	}
@@ -51,29 +60,40 @@ function getDataRecursive(current, container) {
 }
 
 
-function convertElement(element) { // TODO: придумать механизм без кучи ветвлений
+function convertElement(element) {
 
 	let obj = {}
 
-	if (element.tagName === "INPUT") {
+	obj["name"] = element?.name
+	obj["value"] = element?.value
+	obj["checked"] = element?.checked
+	obj["text"] = element?.innerText
 
-		obj["type"] = element.type.toString()
-		obj["name"] = element.name.toString()
-		obj["value"] = element.value.toString()
-
-	}
-
-	if (element.hasChildNodes()) {
+	if (element.childElementCount > 0) {
 		obj["childs"] = []
 	}
 
 	return obj
 }
 
-function renderContent(data) { // TODO: обобщить алгоритм отрисовки
-	let root = document.querySelector(".methods-content")
-	let child = document.createElement(data.tag)
-	child.setAttribute("type", data.type)
-	child.setAttribute("class", data.class)
-	root.appendChild(child)
+function renderContent(root, data) {
+
+	for (let element of data) {
+
+		let keys = Object.keys(element)
+		let child = document.createElement(element.tag)
+		root.appendChild(child)
+		keys.splice(keys.indexOf("tag"), 1)
+		child.textContent = element?.textContent
+		keys.splice(keys.indexOf("textContent"), 1)
+
+		for (let key of keys) {
+
+			if (key === "childs") {
+				renderContent(child, element[key])
+			} else {
+				child.setAttribute(key, element[key])
+			}
+		}
+	}
 }

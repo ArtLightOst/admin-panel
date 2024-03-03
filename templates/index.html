@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 
 {% block navigation %}
-	<div class="navigation-bar">
+	<div id="navigation-bar">
 		{% for module in modules %}
 			<a href={{ url_for('init_module', module = module) }}>{{ module }}</a>
 		{% endfor %}
