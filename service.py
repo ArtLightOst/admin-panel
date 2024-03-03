@@ -36,3 +36,62 @@ def create_button(id: str, caption: str, module: str, method: str) -> dict:
     }
 
     return button
+
+
+def create_table(id: str, headers: str, data: list[dict]):
+    table = {
+        "tag": "table",
+        "id": id,
+        "childs": []
+    }
+
+    thead = {
+        "tag": "thead",
+        "id": "thead",
+        "childs": []
+    }
+
+    thead_tr = {
+        "tag": "tr",
+        "id": "thead-tr",
+        "childs": []
+    }
+
+    headers = headers.split(sep=",")
+
+    for header in headers:
+        thead_tr_th = {
+            "tag": "th",
+            "id": "thead-tr-th-" + str(headers.index(header)),
+            "textContent": header
+        }
+        thead_tr["childs"].append(thead_tr_th)
+
+    thead["childs"].append(thead_tr)
+    table["childs"].append(thead)
+
+    tbody = {
+        "tag": "tbody",
+        "id": "tbody",
+        "childs": []
+    }
+
+    for element in data:
+        tbody_tr = {
+            "tag": "tr",
+            "id": "tbody-tr-" + str(data.index(element)),
+            "childs": []
+        }
+
+        for key in element.keys():
+            tbody_tr_td = {
+                "tag": "td",
+                "id": "tbody-tr-td-" + str(data.index(element)),
+                "textContent": element[key]
+            }
+            tbody_tr["childs"].append(tbody_tr_td)
+        tbody["childs"].append(tbody_tr)
+
+    table["childs"].append(tbody)
+
+    return table

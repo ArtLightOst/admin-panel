@@ -9,9 +9,10 @@ body {
 	background-color: rgb(83, 40, 129);
 }
 
-button {
+button, input, label, table {
 	padding: 5px;
 	margin: 10px;
+	height: fit-content;
 }
 
 a,
@@ -38,6 +39,9 @@ a:active {
 	justify-content: space-around;
 	background-color: rgb(109, 137, 213);
 	padding: 20px;
+	position: sticky;
+	top: 0;
+	z-index: 1;
 }
 
 #methods-list {
@@ -61,3 +65,18 @@ a:active {
 	height: max-content;
 }
 
+tbody tr:nth-child(odd) {
+	background-color: rgb(204, 204, 204);
+}
+
+tbody tr:nth-child(even) {
+	background-color: rgb(243, 229, 171);
+}
+
+thead th {
+	background-color: rgb(201, 169, 244);
+}
+
+label {
+	color: rgb(233, 233, 237);
+}
