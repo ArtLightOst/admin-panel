@@ -5,7 +5,7 @@
 		<div id="methods-list">
 			{% for method in methods %}
 				<button type="submit"
-						onclick="ExecPythonCommand('{{ module_name }}', '{{ method }}')">{{ method }}</button>
+						onclick="ExecPythonCommand('{{ module_name }}', '{{ method }}')">{{ method|synonym(module_name, method) }}</button>
 			{% endfor %}
 		</div>
 		<div id="methods-content">

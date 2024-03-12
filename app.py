@@ -1,6 +1,7 @@
 from types import ModuleType
 from flask import Flask, render_template, request
 from service import get_list_of_modules
+from config import Config
 
 app = Flask(__name__)
 
@@ -26,3 +27,13 @@ def command(module: str, function: str):
          globals(),
          locals())
     return locals()['response']
+
+
+@app.add_template_filter
+def synonym(text: str, module: str = None, method: str = None):
+    if module and method:
+        return Config[module]["methods"][method]
+    elif module:
+        return Config[module]["synonym"]
+    else:
+        return text

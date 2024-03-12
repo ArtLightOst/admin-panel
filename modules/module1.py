@@ -1,4 +1,4 @@
-from service import ParentService, create_button, create_input, create_table
+from service import ParentService, create_button, create_input, create_table, create_list, create_link
 
 
 class Service(ParentService):
@@ -19,17 +19,38 @@ class Service(ParentService):
 
             create_table(
                 id="table1",
-                headers="Заголовок1, Заголовок2, Заголовок3",
+                headers="Заголовок1, Заголовок2, Заголовок3, Заголовок4",
                 data=[
                     {
-                        "1": 1, "2": 2, "3": 3
+                        "11": 1, "22": 2, "33": 3, "input": create_input(id="1", type="checkbox")
                     },
                     {
-                        "1": 1, "2": 2, "3": 3
+                        "11": 1, "22": 2, "33": 3, "input": create_input(id="2", type="checkbox")
                     },
                     {
-                        "1": 1, "2": 2, "3": 3
+                        "11": 1, "22": 2, "33": 3, "input": create_input(id="3", type="checkbox")
                     }
+                ]
+            ),
+
+            create_list(
+                id="list",
+                array=[
+                    create_link(
+                        id="ping",
+                        link="",
+                        text="Ping"
+                    ),
+                    create_link(
+                        id="youtube",
+                        link="https://www.youtube.com/",
+                        text="Youtube"
+                    ),
+                    create_link(
+                        id="github",
+                        link="https://github.com/ArtLightOst",
+                        text="Мой гитхаб"
+                    )
                 ]
             )
 

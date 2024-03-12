@@ -28,7 +28,7 @@ async function ExecPythonCommand(module, command) {
 		root.innerHTML = ""
 		renderContent(root, data)
 	} else {
-		console.log(data)
+		console.log(data) // TODO: решить вопрос с переключением классов для отображения успеха или неудачи
 	}
 }
 
@@ -84,11 +84,11 @@ function renderContent(root, data) {
 		let child = document.createElement(element.tag)
 		root.appendChild(child)
 		keys.splice(keys.indexOf("tag"), 1)
-		child.textContent = element?.textContent
-		keys.splice(keys.indexOf("textContent"), 1)
-
+		if (keys.includes("textContent")) {
+			child.textContent = element.textContent
+			keys.splice(keys.indexOf("textContent"), 1)
+		}
 		for (let key of keys) {
-
 			if (key === "childs") {
 				renderContent(child, element[key])
 			} else {

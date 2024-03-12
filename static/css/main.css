@@ -1,3 +1,20 @@
+@charset "UTF-8";
+@counter-style marker-font {
+	system: cyclic;
+	symbols: "arrow_forward";
+	suffix: " ";
+}
+
+ul {
+	list-style-type: marker-font;
+}
+
+ul li::marker {
+	font-family: 'Material Icons', serif;
+	color: red;
+	font-size: medium;
+}
+
 * {
 	margin: 0;
 	padding: 0;
@@ -9,7 +26,7 @@ body {
 	background-color: rgb(83, 40, 129);
 }
 
-button, input, label, table {
+button, input, label, table, ul, th {
 	padding: 5px;
 	margin: 10px;
 	height: fit-content;
@@ -79,4 +96,8 @@ thead th {
 
 label {
 	color: rgb(233, 233, 237);
+}
+
+td {
+	text-align: center;
 }

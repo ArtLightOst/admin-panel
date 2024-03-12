@@ -3,7 +3,7 @@
 {% block navigation %}
 	<div id="navigation-bar">
 		{% for module in modules %}
-			<a href={{ url_for('init_module', module = module) }}>{{ module }}</a>
+			<a href={{ url_for('init_module', module = module) }}>{{ module|synonym(module) }}</a>
 		{% endfor %}
 	</div>
 {% endblock %}
