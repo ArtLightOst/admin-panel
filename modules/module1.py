@@ -58,8 +58,12 @@ class Service(ParentService):
         return response
 
     def print(self, data: dict):
-        print(data)
-        return {}
+        email = None
+        for i in data["methods-content"]["childs"]:
+            if i["id"] == "input1":
+                email = i["value"]
+                break
+        return {"feedback": f"Процесс запущен, оповещение придет на почту {email}"}
 
 
 instance = Service()

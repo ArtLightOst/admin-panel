@@ -25,10 +25,15 @@ async function ExecPythonCommand(module, command) {
 	let data = await response.json();
 
 	if (command.startsWith("public")) {
+		if (data?.error) {
+			alert(data.error)
+			return
+		}
 		root.innerHTML = ""
 		renderContent(root, data)
 	} else {
-		console.log(data) // TODO: решить вопрос с переключением классов для отображения успеха или неудачи
+		let feedback = document.querySelector("#feedback")
+		feedback.textContent = data.feedback
 	}
 }
 
@@ -64,7 +69,7 @@ function convertElement(element) {
 
 	let obj = {}
 
-	obj["name"] = element?.name
+	obj["id"] = element?.id
 	obj["value"] = element?.value
 	obj["checked"] = element?.checked
 	obj["text"] = element?.innerText
