@@ -2,7 +2,7 @@ import traceback
 from types import ModuleType
 from flask import Flask, render_template, request
 from service import get_list_of_modules
-from config import CONFIG, get_info_logger, get_error_logger
+from config import get_info_logger, get_error_logger
 
 app = Flask(__name__)
 info_logger = get_info_logger()
@@ -39,9 +39,11 @@ def command(module: str, function: str):
 @app.add_template_filter
 def synonym(text: str, module: str = None, method: str = None):
     if module and method:
-        return CONFIG[module]["methods"][method]
+        exec(compile(source = f"from modules.{module} import config", filename = "", mode = "exec"), globals(), locals())
+        return locals()['config'][module]["methods"][method]
     elif module:
-        return CONFIG[module]["synonym"]
+        exec(compile(source = f"from modules.{module} import config", filename = "", mode = "exec"), globals(), locals())
+        return locals()['config'][module]["synonyme"]
     else:
         return text
 
