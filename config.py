@@ -1,27 +1,6 @@
 from logging import INFO, ERROR, Formatter, getLogger, Logger
 from logging.handlers import TimedRotatingFileHandler
 
-CONFIG = {
-    "module1": {
-        "synonym": "Тестовый синоним 1",
-        "methods": {
-            "public_print": "Тестовая отрисовка 1",
-        }
-    },
-    "module2": {
-        "synonym": "Тестовый синоним 2",
-        "methods": {
-            "public_print": "Тестовая отрисовка 2",
-        }
-    },
-    "module3": {
-        "synonym": "Тестовый синоним 3",
-        "methods": {
-            "public_print": "Тестовая отрисовка 3",
-        }
-    }
-}
-
 
 def get_info_logger() -> Logger:
     info_handler = TimedRotatingFileHandler(
