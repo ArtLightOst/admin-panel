@@ -92,7 +92,12 @@ def create_table(id: str, headers: str, data: list[dict]) -> dict:
     return table
 
 
-def create_list(id: str, array: list[str | tuple | dict]) -> dict:
+def create_list(id: str, array: list[str | tuple | dict], caption: str = "") -> dict:
+    label = {
+        "tag": "label",
+        "for": id,
+        "textContent": caption,
+    }
     ul = {
         "tag": "ul",
         "id": id,
@@ -112,7 +117,7 @@ def create_list(id: str, array: list[str | tuple | dict]) -> dict:
         else:
             li["textContent"] = element
         ul["childs"].append(li)
-    return ul
+    return label, ul
 
 
 def create_link(id: str, link: str, text: str) -> dict:
