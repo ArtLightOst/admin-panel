@@ -94,12 +94,13 @@ thead th {
 	background-color: rgb(201, 169, 244);
 }
 
-label {
+label, li {
 	color: rgb(233, 233, 237);
 }
 
 td {
 	text-align: center;
+	padding: 10px;
 }
 
 p {
