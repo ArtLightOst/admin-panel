@@ -1,3 +1,5 @@
+//setInterval(background, 1000)
+
 async function ExecPythonCommand(module, command) {
 
 	let body
@@ -17,7 +19,7 @@ async function ExecPythonCommand(module, command) {
 
 	let response = await fetch("/" + module + "/" + command, {
 		method: "POST",
-		headers: {"Content-Type": "application/json", "Accept": "application/json"},
+		headers: { "Content-Type": "application/json", "Accept": "application/json" },
 		mode: "same-origin",
 		body: body
 	})
@@ -64,7 +66,6 @@ function getDataRecursive(current, container) {
 
 }
 
-
 function convertElement(element) {
 
 	let obj = {}
@@ -101,4 +102,59 @@ function renderContent(root, data) {
 			}
 		}
 	}
+}
+
+async function background() {
+
+	if (document.querySelector("#methods-wrapper")) {
+
+		let response = await fetch(window.location.href.split("/").pop() + "/BackgroundProcesses")
+
+		let data = await response.json()
+
+		if (data) {
+
+			for (let element of data) {
+
+				id = element.id
+
+				progress = document.querySelector("#" + id)
+
+				if (progress) {
+
+					progress.setAttribute("value", element.value)
+					label = document.querySelector("#label" + id)
+					label.textContent = element.title + "(" + element.value * 100 / element.max + "%)"
+
+				}
+				else {
+
+					parent = document.querySelector("#feedback")
+
+					newContainer = document.createElement("div")
+					newContainer.setAttribute("id", "container" + id)
+
+					newProgress = document.createElement("progress")
+					newProgress.setAttribute("id", id)
+					newProgress.setAttribute("value", element.value)
+					newProgress.setAttribute("max", element.max)
+
+					newLabel = document.createElement("label")
+					newLabel.setAttribute("for", id)
+					newLabel.setAttribute("id", "label" + id)
+					newLabel.textContent = element.title + "(" + element.value * 100 / element.max + "%)"
+
+					newContainer.appendChild(newLabel)
+					newContainer.appendChild(newProgress)
+
+					parent.appendChild(newContainer)
+
+				}
+
+			}
+
+		}
+
+	}
+
 }
