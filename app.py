@@ -3,6 +3,7 @@ from types import ModuleType
 from flask import Flask, render_template, request
 from service import get_list_of_modules
 from config import get_info_logger, get_error_logger
+from random import randint
 
 app = Flask(__name__)
 info_logger = get_info_logger()
@@ -34,6 +35,17 @@ def command(module: str, function: str):
     except Exception as e:
         error_logger.error(f"{e} -> {traceback.format_exc()}")
         return {"error": "Произошла ошибка при POST запросе, смотрите логи"}
+
+
+@app.route('/<string:module>/BackgroundProcesses', methods=['GET'])
+def BackgroundProcesses(module: str):
+        return [{
+        "id": "test",
+        "title": "Выполняется длительная операция",
+        "value": randint(0, 100),
+        "max": 100
+    }]    
+    
 
 
 @app.add_template_filter
