@@ -6,7 +6,7 @@ class Service(ParentService):
 
     def public_print(self, data: dict) -> list[dict]:
 
-        result = subprocess.run("cat all_lics.txt", shell = True, stdout = subprocess.PIPE, stderr = subprocess.PIPE, text = True)
+        result = subprocess.run("/opt/1C/1CE/components/1c-enterprise-ring-0.19.5+12-x86_64/ring license list", shell = True, stdout = subprocess.PIPE, stderr = subprocess.PIPE, text = True)
 
         all_lics = []
 
@@ -18,7 +18,7 @@ class Service(ParentService):
 
         all_lics = dict().fromkeys(all_lics)
 
-        result = subprocess.run("cat used_lics.txt", shell = True, stdout = subprocess.PIPE, stderr = subprocess.PIPE, text = True)
+        result = subprocess.run("lsof /var/1C/licenses/*", shell = True, stdout = subprocess.PIPE, stderr = subprocess.PIPE, text = True)
         used_lics = {}
 
         for line in result.stdout.split('\n'):
@@ -30,7 +30,7 @@ class Service(ParentService):
                 current_lic = current_lic[len(current_lic) - 1]
                 used_lics[pid] = current_lic.replace(")", "")
 
-        result = subprocess.run("cat host_lics.txt", shell = True, stdout = subprocess.PIPE, stderr = subprocess.PIPE, text = True)
+        result = subprocess.run("ps axu | grep rmngr", shell = True, stdout = subprocess.PIPE, stderr = subprocess.PIPE, text = True)
 
         host_lics = {}
 
