@@ -18,7 +18,7 @@ class Service(ParentService):
 
         all_lics = dict().fromkeys(all_lics)
 
-        result = subprocess.run("lsof /var/1C/licenses/*", shell = True, stdout = subprocess.PIPE, stderr = subprocess.PIPE, text = True)
+        result = subprocess.run("sudo lsof /var/1C/licenses/*", shell = True, stdout = subprocess.PIPE, stderr = subprocess.PIPE, text = True)
         used_lics = {}
 
         for line in result.stdout.split('\n'):
@@ -30,7 +30,7 @@ class Service(ParentService):
                 current_lic = current_lic[len(current_lic) - 1]
                 used_lics[pid] = current_lic.replace(")", "")
 
-        result = subprocess.run("ps axu | grep rmngr", shell = True, stdout = subprocess.PIPE, stderr = subprocess.PIPE, text = True)
+        result = subprocess.run("ps axu | grep 'rmngr' | grep --invert-match 'grep rmngr'", shell = True, stdout = subprocess.PIPE, stderr = subprocess.PIPE, text = True)
 
         host_lics = {}
 
@@ -84,7 +84,7 @@ class Service(ParentService):
 
 instance = Service()
 config = {
-	"module1": {
+	"licensing": {
 		"synonyme": "Лицензирование",
 		"methods": {
 			"public_print": "Использованные лицензии"
