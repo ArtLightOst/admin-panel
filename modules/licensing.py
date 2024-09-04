@@ -57,11 +57,19 @@ class Service(ParentService):
 
         formatted = []
 
+	registration_numbers = {}
+
+        for k in result:
+            if result[k]:
+                output = subprocess.run(f"grep \"Регистрационный номер: \" /var/1C/licenses/{result[k]}", shell = True, stdout = subprocess.PIPE, stderr = subprocess.PIPE, text = True).stdout
+                registration_numbers[k] = output.split(":")[1].strip()
+
         for k in result:
             formatted.append(
                 {
                     "server": k,
-                    "lic": result[k] if result[k] else "Не используется"
+                    "lic": result[k] if result[k] else "Не используется",
+		    "reg_number": registration_numbers[k] if registration_numbers.get(k, False) else "Не используется"
                 }
             )
 
@@ -69,7 +77,7 @@ class Service(ParentService):
 
             create_table(
                 id="lics",
-                headers="Сервер, Лиценизия",
+                headers="Сервер, Лиценизия, Регистрационный номер",
                 data=formatted
             ),
             *create_list(
