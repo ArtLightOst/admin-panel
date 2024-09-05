@@ -71,7 +71,7 @@ class Service(ParentService):
 
         formatted = []
 
-	registration_numbers = {}
+	    registration_numbers = {}
 
         for k in result:
             if result[k]:
@@ -107,63 +107,63 @@ class Service(ParentService):
 
         try:
 
-           result = subprocess.run("/opt/1C/1CE/components/1c-enterprise-ring-0.19.5+12-x86_64/ring license list", shell = True, stdout = subprocess.PIPE, stderr = subprocess.PIPE, text = True)
+            result = subprocess.run("/opt/1C/1CE/components/1c-enterprise-ring-0.19.5+12-x86_64/ring license list", shell = True, stdout = subprocess.PIPE, stderr = subprocess.PIPE, text = True)
 
-	   all_lics = []
+            all_lics = []
 
-           for line in result.stdout.split('\n'):
-               if line:
-                   lic = re.search("\"\d+.lic\"", line)
-                   if lic[0]:
-                       all_lics.append(lic[0].replace('"', ''))
+            for line in result.stdout.split('\n'):
+                if line:
+                    lic = re.search("\"\d+.lic\"", line)
+                    if lic[0]:
+                        all_lics.append(lic[0].replace('"', ''))
 
-           all_lics = dict().fromkeys(all_lics)
+            all_lics = dict().fromkeys(all_lics)
 
-           result = subprocess.run("sudo lsof /var/1C/licenses/*", shell = True, stdout = subprocess.PIPE, stderr = subprocess.PIPE, text = True)
-           used_lics = {}
+            result = subprocess.run("sudo lsof /var/1C/licenses/*", shell = True, stdout = subprocess.PIPE, stderr = subprocess.PIPE, text = True)
+            used_lics = {}
 
-           for line in result.stdout.split('\n'):
-               if line:
-                   current = line.split()
-                   pid = current[1]
-                   current_lic = current[len(current) - 1]
-                   current_lic = current_lic.split('/')
-                   current_lic = current_lic[len(current_lic) - 1]
-                   used_lics[pid] = current_lic.replace(")", "")
+            for line in result.stdout.split('\n'):
+                if line:
+                    current = line.split()
+                    pid = current[1]
+                    current_lic = current[len(current) - 1]
+                    current_lic = current_lic.split('/')
+                    current_lic = current_lic[len(current_lic) - 1]
+                    used_lics[pid] = current_lic.replace(")", "")
 
-           result = subprocess.run("ps axu | grep 'rmngr' | grep --invert-match 'grep rmngr'", shell = True, stdout = subprocess.PIPE, stderr = subprocess.PIPE, text = True)
+            result = subprocess.run("ps axu | grep 'rmngr' | grep --invert-match 'grep rmngr'", shell = True, stdout = subprocess.PIPE, stderr = subprocess.PIPE, text = True)
 
-           host_lics = {}
+            host_lics = {}
 
-           for line in result.stdout.split('\n'):
-               if line:
-                   current = line.split()
-                   pid = current[1]
-                   index = current.index("-reghost")
-                   host_lics[pid] = current[index + 1]
+            for line in result.stdout.split('\n'):
+                if line:
+                    current = line.split()
+                    pid = current[1]
+                    index = current.index("-reghost")
+                    host_lics[pid] = current[index + 1]
 
-           result = {}
+            result = {}
 
-           for key in host_lics:
-               lic = used_lics.get(key)
-               if pid:
-                   result[host_lics[key]] = lic
+            for key in host_lics:
+                lic = used_lics.get(key)
+                if pid:
+                    result[host_lics[key]] = lic
         
-           keys = set(all_lics.keys())
-           values = set(result.values())
+            keys = set(all_lics.keys())
+            values = set(result.values())
 
-           diff = keys.difference(values)
+            diff = keys.difference(values)
 
-           free = list(diff)
+            free = list(diff)
 
-           if not len(free):
-              notify(config["Subject"], config["recipients"], config["body"] + ", имя сервера: " + socket.gethostname())
+            if not len(free):
+               notify(config["Subject"], config["recipients"], config["body"] + ", имя сервера: " + socket.gethostname())
 
-           return 0
+            return 0
 
         except Exception as ex:
 
-           return ex
+            return ex
 
 
 instance = Service()
