@@ -1,4 +1,7 @@
 from os import listdir
+from email.mime.multipart import MIMEMultipart
+from email.mime.text import MIMEText
+from smtplib import SMTP
 
 
 class ParentService:
@@ -129,3 +132,20 @@ def create_link(id: str, link: str, text: str) -> dict:
         "textContent": text,
     }
     return a
+
+def notify(Subject: str, recipients: list[str], body: str) -> None:
+
+    smtp_obj = SMTP("", 25) # указать smtp сервер
+
+    msg = MIMEMultipart()
+
+    msg['From'] = "" # Указать учетку отправителя
+    msg['To'] = ",".join(recipients)
+
+    msg['Subject'] = Subject
+
+    msg.attach(MIMEText(body, 'plain'))
+
+    smtp_obj.sendmail(msg['From'], recipients, msg.as_string())
+
+    smtp_obj.quit()
