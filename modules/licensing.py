@@ -1,8 +1,22 @@
-from service import ParentService, create_button, create_input, create_table, create_list, create_link
-import subprocess, re
+import subprocess, re, sys, os, socket
+
+sys.path.append(os.path.dirname(os.path.dirname(os.path.realpath(__file__))))
+
+from service import ParentService, create_button, create_input, create_table, create_list, create_link, notify
+
+config = {
+	"module1": {
+		"synonyme": "Лицензирование",
+		"methods": {
+			"public_print": "Использованные лицензии"
+			}
+		},
+        "Subject": "Лицензирование",
+        "recipients": ["", ""], # Указать получателей письма
+        "body": "Не осталось свободных лицензий"
+	} 
 
 class Service(ParentService):
-
 
     def public_print(self, data: dict) -> list[dict]:
 
@@ -89,14 +103,70 @@ class Service(ParentService):
         ]
         return response
 
+    def cron_licensing(self) -> int:
+
+        try:
+
+           result = subprocess.run("/opt/1C/1CE/components/1c-enterprise-ring-0.19.5+12-x86_64/ring license list", shell = True, stdout = subprocess.PIPE, stderr = subprocess.PIPE, text = True)
+
+	   all_lics = []
+
+           for line in result.stdout.split('\n'):
+               if line:
+                   lic = re.search("\"\d+.lic\"", line)
+                   if lic[0]:
+                       all_lics.append(lic[0].replace('"', ''))
+
+           all_lics = dict().fromkeys(all_lics)
+
+           result = subprocess.run("sudo lsof /var/1C/licenses/*", shell = True, stdout = subprocess.PIPE, stderr = subprocess.PIPE, text = True)
+           used_lics = {}
+
+           for line in result.stdout.split('\n'):
+               if line:
+                   current = line.split()
+                   pid = current[1]
+                   current_lic = current[len(current) - 1]
+                   current_lic = current_lic.split('/')
+                   current_lic = current_lic[len(current_lic) - 1]
+                   used_lics[pid] = current_lic.replace(")", "")
+
+           result = subprocess.run("ps axu | grep 'rmngr' | grep --invert-match 'grep rmngr'", shell = True, stdout = subprocess.PIPE, stderr = subprocess.PIPE, text = True)
+
+           host_lics = {}
+
+           for line in result.stdout.split('\n'):
+               if line:
+                   current = line.split()
+                   pid = current[1]
+                   index = current.index("-reghost")
+                   host_lics[pid] = current[index + 1]
+
+           result = {}
+
+           for key in host_lics:
+               lic = used_lics.get(key)
+               if pid:
+                   result[host_lics[key]] = lic
+        
+           keys = set(all_lics.keys())
+           values = set(result.values())
+
+           diff = keys.difference(values)
+
+           free = list(diff)
+
+           if not len(free):
+              notify(config["Subject"], config["recipients"], config["body"] + ", имя сервера: " + socket.gethostname())
+
+           return 0
+
+        except Exception as ex:
+
+           return ex
+
 
 instance = Service()
-config = {
-	"licensing": {
-		"synonyme": "Лицензирование",
-		"methods": {
-			"public_print": "Использованные лицензии"
-			}
-		}
 
-	}
+if __name__ == "__main__":
+    sys.exit(instance.cron_licensing())
