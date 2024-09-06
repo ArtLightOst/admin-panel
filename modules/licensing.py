@@ -100,7 +100,7 @@ class Service(ParentService):
 
             create_table(
                 id="lics",
-                headers="Сервер, Лиценизия, Регистрационный номер",
+                headers="Сервер, Лицензия, Регистрационный номер",
                 data=formatted
             ),
             *create_list(
