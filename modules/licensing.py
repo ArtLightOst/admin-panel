@@ -5,10 +5,10 @@ sys.path.append(os.path.dirname(os.path.dirname(os.path.realpath(__file__))))
 from service import ParentService, create_button, create_input, create_table, create_list, create_link, notify
 
 config = {
-	"module1": {
+	"licensing": {
 		"synonyme": "Лицензирование",
 		"methods": {
-			"public_print": "Использованные лицензии"
+			"public_licensing_status": "Использованные лицензии"
 			}
 		},
         "Subject": "Лицензирование",
@@ -18,7 +18,7 @@ config = {
 
 class Service(ParentService):
 
-    def public_print(self, data: dict) -> list[dict]:
+    def public_licensing_status(self, data: dict) -> list[dict]:
 
         result = subprocess.run("/opt/1C/1CE/components/1c-enterprise-ring-0.19.5+12-x86_64/ring license list", shell = True, stdout = subprocess.PIPE, stderr = subprocess.PIPE, text = True)
 
@@ -71,7 +71,7 @@ class Service(ParentService):
 
         formatted = []
 
-	    registration_numbers = {}
+        registration_numbers = {}
 
         for k in result:
             if result[k]:
