@@ -92,7 +92,7 @@ class Service(ParentService):
         formatted_free = []
 
         for lic in free:
-            output = subprocess.run(f"grep \"Регистрационный номер: \" licenses/{lic}", shell = True, stdout = subprocess.PIPE, stderr = subprocess.PIPE, text = True).stdout
+            output = subprocess.run(f"grep \"Регистрационный номер: \" /var/1C/licenses/{lic}", shell = True, stdout = subprocess.PIPE, stderr = subprocess.PIPE, text = True).stdout
             number = output.split(":")[1].strip()
             formatted_free.append(f"{lic} ({number})")
 	
