@@ -1,0 +1,14 @@
+[Unit]
+Description=admin-panel
+After=syslog.target network.target
+
+[Service]
+WorkingDirectory=/opt/admin-panel/panel
+ExecStart=/usr/local/bin/python3.11 /opt/admin-panel/panel/main.py
+User=panel
+Group=panel
+Restart=always
+RestartSec=120
+
+[Install]
+WantedBy=multi-user.target
