@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 import subprocess, re, sys, os, socket
 
 sys.path.append(os.path.dirname(os.path.dirname(os.path.realpath(__file__))))
@@ -6,14 +8,14 @@ from service import ParentService, create_button, create_input, create_table, cr
 
 config = {
 	"licensing": {
-		"synonyme": "Лицензирование",
+		"synonyme": u"Лицензирование",
 		"methods": {
-			"public_licensing_status": "Использованные лицензии"
+			"public_licensing_status": u"Использованные лицензии"
 			}
 		},
-        "Subject": "Лицензирование",
+        "Subject": u"Лицензирование",
         "recipients": ["", ""], # Указать получателей письма
-        "body": "Не осталось свободных лицензий"
+        "body": u"Не осталось свободных лицензий"
 	} 
 
 class Service(ParentService):
