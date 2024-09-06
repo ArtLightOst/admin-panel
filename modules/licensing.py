@@ -165,7 +165,7 @@ class Service(ParentService):
 
             free = list(diff)
 
-            if not len(free):
+            if not len(free) and len(result) > len(all_lics):
                notify(config["Subject"], config["recipients"], config["body"] + ", имя сервера: " + socket.gethostname())
 
             return 0
