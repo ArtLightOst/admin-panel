@@ -17,6 +17,9 @@ async function ExecPythonCommand(module, command) {
 
 	}
 
+	root.innerHTML = ""
+	root.appendChild(getLoadingElement())
+	
 	let response = await fetch("/" + module + "/" + command, {
 		method: "POST",
 		headers: { "Content-Type": "application/json", "Accept": "application/json" },
@@ -156,5 +159,14 @@ async function background() {
 		}
 
 	}
+
+}
+
+function getLoadingElement() {
+	
+	img = document.createElement("img")
+	img.setAttribute("src", "/static/img/loading.gif")
+
+	return img
 
 }
