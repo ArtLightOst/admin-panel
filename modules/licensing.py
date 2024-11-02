@@ -4,7 +4,7 @@ import subprocess, re, sys, os, socket
 
 sys.path.append(os.path.dirname(os.path.dirname(os.path.realpath(__file__))))
 
-from service import ParentService, create_button, create_input, create_table, create_list, create_link, notify
+from service import ParentService, create_button, create_input, create_table, create_list, create_link, notify, MyThread, notify_telegram
 
 config = {
 	"licensing": {
@@ -15,7 +15,10 @@ config = {
 		},
         "Subject": u"Лицензирование",
         "recipients": ["", ""], # Указать получателей письма
-        "body": u"Не осталось свободных лицензий"
+        "body": u"Не осталось свободных лицензий",
+	"telegram_token": "", # Указать токен от всеотца ботов
+        "telegram_chats_id": [""], # Указать id чатов (получается только программно через http запрос
+        "telegram_message": "",
 	} 
 
 class Service(ParentService):
@@ -112,6 +115,14 @@ class Service(ParentService):
         ]
         return response
 
+    def public_long_operations(self, data: dict) -> MyThread:
+        
+        proc = MyThread(name="Тестовый скрипт", command=["bash", "mybashscript.sh"])
+
+        proc.start()
+
+        return proc
+
     def cron_licensing(self) -> int:
 
         try:
@@ -174,8 +185,42 @@ class Service(ParentService):
 
             return ex
 
+def cron_check_prod(self) -> int:
 
-instance = Service()
+    try:
+
+        result = subprocess.run("ps axu | grep -i '{имя базы}' | grep --invert-match 'grep -i {имя базы}'", shell = True, stdout = subprocess.PIPE, stderr = subprocess.PIPE, text = True)
+
+        rmngr_is_up = False
+        rphost_is_up = False
+
+        for line in result.stdout.split('\n'):
+            if line:
+                rmngr = line.find("rmngr")
+                if rmngr != -1:
+                    rmngr_is_up = True
+                rphost = line.find("rphost")
+                if rphost != -1:
+                    rphost_is_up = True
+
+                if rmngr_is_up and rphost_is_up:
+                    return 0
+
+                for chat in config["telegram_chats_id"]:    
+                    notify_telegram(config["telegram_token"], chat, config["telegram_message"])
+
+        return 0
+                       
+    except Exception as ex:
+
+        return ex
+
+
+instance = Service()     
 
 if __name__ == "__main__":
-    sys.exit(instance.cron_licensing())
+    for arg in sys.orig_argv:
+        if arg == "check_prod_lic":
+            sys.exit(instance.cron_check_prod())
+        if arg == "check_all_lic":
+            sys.exit(instance.cron_licensing())
