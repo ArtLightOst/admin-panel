@@ -1,13 +1,13 @@
 import traceback
 from types import ModuleType
 from flask import Flask, render_template, request
-from service import get_list_of_modules
+from service import get_list_of_modules, MyThread
 from config import get_info_logger, get_error_logger
-from random import randint
 
 app = Flask(__name__)
 info_logger = get_info_logger()
 error_logger = get_error_logger()
+threads_manager = []
 
 
 @app.route("/")
@@ -31,7 +31,11 @@ def command(module: str, function: str):
                      mode="exec"),
              globals(),
              locals())
-        return locals()['response']
+        if isinstance(locals()['response'], MyThread):
+            threads_manager.append(locals()['response'])
+            return {"error": "Операция началась"}
+        else:
+            return locals()['response']
     except Exception as e:
         error_logger.error(f"{e} -> {traceback.format_exc()}")
         return {"error": "Произошла ошибка при POST запросе, смотрите логи"}
@@ -39,12 +43,15 @@ def command(module: str, function: str):
 
 @app.route('/<string:module>/BackgroundProcesses', methods=['GET'])
 def BackgroundProcesses(module: str):
-        return [{
-        "id": "test",
-        "title": "Выполняется длительная операция",
-        "value": randint(0, 100),
-        "max": 100
-    }]    
+    response = []
+    for thread in threads_manager:
+        if thread.is_alive():
+            response.append({
+                "id": "pid" + str(thread.native_id),
+                "title": thread.name,
+                "output": thread.last_output if thread.last_output else ""
+            })
+    return response
     
 
 
