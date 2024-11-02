@@ -2,12 +2,34 @@ from os import listdir
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from smtplib import SMTP
+from threading import Thread
+from subprocess import Popen, PIPE, STDOUT
+import requests
 
 
 class ParentService:
 
     def methods(self):
         return [f for f in dir(self) if not f.startswith("_") and f.startswith("public")]
+
+
+class MyThread(Thread):
+    
+    def __init__(self, name, command):
+        super().__init__()
+        self.last_output = None
+        self.name = name
+        self.command = command
+        self.all_output = []
+
+    def run(self):
+
+        proc =  Popen(self.command, stdout = PIPE, stderr = STDOUT, text = True)
+
+        for line in iter(proc.stdout.readline, ''):
+            if line:
+                self.last_output = line
+                self.all_output.append(line)
 
 
 def get_list_of_modules() -> list[str]:
@@ -135,11 +157,11 @@ def create_link(id: str, link: str, text: str) -> dict:
 
 def notify(Subject: str, recipients: list[str], body: str) -> None:
 
-    smtp_obj = SMTP("", 25) # указать smtp сервер
+    smtp_obj = SMTP("192.168.90.7", 25)
 
     msg = MIMEMultipart()
 
-    msg['From'] = "" # Указать учетку отправителя
+    msg['From'] = "1c_noreply@di-house.ru"
     msg['To'] = ",".join(recipients)
 
     msg['Subject'] = Subject
@@ -149,3 +171,7 @@ def notify(Subject: str, recipients: list[str], body: str) -> None:
     smtp_obj.sendmail(msg['From'], recipients, msg.as_string())
 
     smtp_obj.quit()
+
+def notify_telegram(TOKEN: str, chat_id: str, message: str) -> None:
+    url = f"https://api.telegram.org/bot{TOKEN}/sendMessage?chat_id={chat_id}&text={message}"
+    requests.get(url).json()
